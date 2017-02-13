@@ -128,8 +128,6 @@ dto Employee with mapstruct
 
 service Employee with serviceClass
 
-microservice * with mymicroservice
-
 search Employee with elasticsearch
 
 skipServer for Country

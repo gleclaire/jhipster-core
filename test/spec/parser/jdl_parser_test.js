@@ -151,11 +151,6 @@ describe('JDLParser', () => {
               value: BinaryOptionValues.pagination.PAGINATION
             }),
             new JDLBinaryOption({
-              name: BinaryOptions.MICROSERVICE,
-              entityNames: ['*'],
-              value: 'mymicroservice'
-            }),
-            new JDLBinaryOption({
               name: BinaryOptions.SEARCH_ENGINE,
               entityNames: ['Employee'],
               value: BinaryOptionValues.searchEngine.ELASTIC_SEARCH
