@@ -308,10 +308,16 @@ angularSuffixDecl
 // common way to declare an entity list
 entityList
   = e:ENTITY_NAME SPACE* ',' SPACE* sub:entityList { return addUniqueElements([e], sub); }
-  / STAR SPACE* WITH SPACE* method:([A-z0-9-]+) { return ['*', method.toString().replace(/,/g,'')]; }
-  / ALL SPACE* WITH SPACE* method:([A-z0-9-]+) { return ['*', method.toString().replace(/,/g,'')]; }
-  / e:ENTITY_NAME SPACE* WITH SPACE* method:([A-z0-9-]+) { return [e, method.toString().replace(/,/g,'')]; }
+  / STAR SPACE* WITH SPACE* method:methodDeclaration { return ['*', method]; }
+  / ALL SPACE* WITH SPACE* method:methodDeclaration { return ['*', method]; }
+  / e:ENTITY_NAME SPACE* WITH SPACE* method:methodDeclaration { return [e, method]; }
 
+methodDeclaration
+  = method:([A-z0-9-]+) { return method.join(''); }
+
+microserviceMethodDeclaration
+  = method:methodDeclaration { return { method: method, path: '' }; }
+  / method:methodDeclaration SPACE* '('path:([.A-z0-9-_])')' { return { method: method, path: path.join('') }; }
 
 relationshipType
 = ONE_TO_ONE { return 'one-to-one'; }
