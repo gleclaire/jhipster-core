@@ -237,13 +237,14 @@ serviceDecl
 
 // first way of declaring microservices
 microserviceDecl1
-  = MICROSERVICE SPACE+ decl:entityList SPACE* ex:exclusion? SPACE*  {
+  = MICROSERVICE SPACE+ decl:entityList SPACE* path:microservicePathDeclaration? SPACE* ex:exclusion? SPACE*  {
     parsed.microservice[decl[decl.length - 1]] =
       parsed.microservice[decl[decl.length - 1]] || { list: [], excluded: [] };
     addUniqueElements(parsed.microservice[decl[decl.length - 1]].list, decl.slice(0, decl.length - 1));
     if (ex) {
       addUniqueElements(parsed.microservice[decl[decl.length - 1]].excluded, ex);
     }
+    parsed.microservice[decl[decl.length - 1]].path = path;
     return parsed.microservice;
   }
 
@@ -315,9 +316,10 @@ entityList
 methodDeclaration
   = method:([A-z0-9-]+) { return method.join(''); }
 
-microserviceMethodDeclaration
-  = method:methodDeclaration { return { method: method, path: '' }; }
-  / method:methodDeclaration SPACE* '('path:([.A-z0-9-_])')' { return { method: method, path: path.join('') }; }
+microservicePathDeclaration
+  = '('path:([./A-z0-9-_])')' { return path.join(''); }
+  / '(' SPACE* ')' { return ''; }
+  / '' { return ''; }
 
 relationshipType
 = ONE_TO_ONE { return 'one-to-one'; }
