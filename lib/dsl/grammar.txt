@@ -318,13 +318,13 @@ microserviceEntityList
     return {
       entityList: entityList.slice(0, entityList.length -1),
       method: entityList[entityList.length - 1],
-      path: path || entityList[entityList.length - 1]
+      path: path
     };
   }
 
 microservicePath
   = '(' SPACE* path:([./A-z0-9-_]+) SPACE* ')' { return path.join('') }
-  / '('? SPACE* '' SPACE* ')'? { return null; }
+  / '('? SPACE* '' SPACE* ')'? { return ''; }
 
 relationshipType
 = ONE_TO_ONE { return 'one-to-one'; }
