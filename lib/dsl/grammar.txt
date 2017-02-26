@@ -237,10 +237,11 @@ serviceDecl
 
 // first way of declaring microservices
 microserviceDecl1
-  = MICROSERVICE SPACE+ decl:entityList SPACE* ex:exclusion? SPACE*  {
-    parsed.microservice[decl[decl.length - 1]] =
-      parsed.microservice[decl[decl.length - 1]] || { list: [], excluded: [] };
-    addUniqueElements(parsed.microservice[decl[decl.length - 1]].list, decl.slice(0, decl.length - 1));
+  = MICROSERVICE SPACE+ decl:microserviceEntityList SPACE* ex:exclusion? SPACE*  {
+    parsed.microservice[decl.method] =
+      parsed.microservice[decl.method] || { list: [], excluded: [], path: decl.path };
+    parsed.microservice[decl.method].path = decl.path;
+    addUniqueElements(parsed.microservice[decl.method].list, decl.entityList);
     if (ex) {
       addUniqueElements(parsed.microservice[decl[decl.length - 1]].excluded, ex);
     }
@@ -312,6 +313,18 @@ entityList
   / ALL SPACE* WITH SPACE* method:([A-z0-9-]+) { return ['*', method.toString().replace(/,/g,'')]; }
   / e:ENTITY_NAME SPACE* WITH SPACE* method:([A-z0-9-]+) { return [e, method.toString().replace(/,/g,'')]; }
 
+microserviceEntityList
+  = entityList:entityList SPACE* path:microservicePath {
+    return {
+      entityList: entityList.slice(0, entityList.length -1),
+      method: entityList[entityList.length - 1],
+      path: path || entityList[entityList.length - 1]
+    };
+  }
+
+microservicePath
+  = '(' SPACE* path:([./A-z0-9-_]+) SPACE* ')' { return path.join('') }
+  / '('? SPACE* '' SPACE* ')'? { return null; }
 
 relationshipType
 = ONE_TO_ONE { return 'one-to-one'; }
