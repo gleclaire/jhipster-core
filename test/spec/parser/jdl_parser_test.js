@@ -2,6 +2,7 @@
 
 const expect = require('chai').expect,
   fail = expect.fail,
+  path = require('path'),
   parseFromFiles = require('../../../lib/reader/jdl_reader').parseFromFiles,
   JDLParser = require('../../../lib/parser/jdl_parser'),
   JDLEntity = require('../../../lib/core/jdl_entity'),
@@ -557,6 +558,37 @@ describe('JDLParser', () => {
                 }
               }
             }
+          });
+        });
+      });
+      describe('when having microservices', () => {
+        const input = parseFromFiles(['./test/test_files/microservices.jdl']);
+        const content = JDLParser.parse(input, 'sql');
+        describe("when using '*' or 'all' with 'except'", () => {
+          it('assigns everything except the selected entities', () => {
+            expect(content.options[0].name).to.eq('microservice');
+            expect(content.options[0].entityNames.toString()).to.eq('[*]');
+            expect(content.options[0].excludedNames.has('A')
+              && content.options[0].excludedNames.has('B')
+              && content.options[0].excludedNames.has('D')
+            ).to.be.true;
+            expect(content.options[0].value).to.eq('SomeMicroservice');
+            expect(content.options[0].path).to.be.undefined;
+
+            expect(content.options[1].name).to.eq('microservice');
+            expect(content.options[1].entityNames.toString()).to.eq('[*]');
+            expect(content.options[1].excludedNames.has('A')
+              && content.options[1].excludedNames.has('C')
+            ).to.be.true;
+            expect(content.options[1].value).to.eq('SomeMicroservice2');
+            expect(content.options[1].path).to.be.undefined;
+
+            expect(content.options[2].name).to.eq('microservice');
+            expect(content.options[2].entityNames.toString()).to.eq('[A]');
+            expect(content.options[2].excludedNames.toString()
+            ).to.deep.eq('[]');
+            expect(content.options[2].value).to.eq('SomeMicroservice3');
+            expect(content.options[2].path).to.eq(path.normalize('../someMicroservice3'));
           });
         });
       });
