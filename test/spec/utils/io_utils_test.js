@@ -6,7 +6,7 @@ const expect = require('chai').expect,
   exists = IOUtils.exists,
   isDirectory = IOUtils.isDirectory;
 
-describe.only('IOUtils', () => {
+describe('IOUtils', () => {
   describe('::exists', () => {
     describe('when passing an invalid path', () => {
       it('returns false', () => {
